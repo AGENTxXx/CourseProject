@@ -111,7 +111,6 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             app:layout_constraintEnd_toStartOf="@+id/star2"
-            
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/genres"
@@ -124,7 +123,6 @@
             android:layout_marginStart="2dp"
             android:layout_weight="1"
             app:layout_constraintEnd_toStartOf="@+id/star3"
-            
             app:layout_constraintStart_toEndOf="@+id/star1"
             app:layout_constraintTop_toTopOf="@+id/star1"
             app:srcCompat="@drawable/star" />
@@ -136,7 +134,6 @@
             android:layout_marginStart="2dp"
             android:layout_weight="1"
             app:layout_constraintEnd_toStartOf="@+id/star5"
-            
             app:layout_constraintStart_toEndOf="@+id/star2"
             app:layout_constraintTop_toTopOf="@+id/star2"
             app:srcCompat="@drawable/star" />
@@ -158,7 +155,6 @@
             android:layout_marginStart="2dp"
             android:layout_weight="1"
             app:layout_constraintEnd_toStartOf="@+id/star4"
-            
             app:layout_constraintStart_toEndOf="@+id/star3"
             app:layout_constraintTop_toTopOf="@+id/star3"
             app:srcCompat="@drawable/star" />
@@ -225,7 +221,7 @@
             android:layout_marginEnd="8dp"
             android:adjustViewBounds="true"
             app:layout_constraintEnd_toStartOf="@+id/actor2"
-            
+
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cast"
@@ -274,7 +270,7 @@
             android:layout_marginEnd="8dp"
             android:adjustViewBounds="true"
             app:layout_constraintEnd_toStartOf="@+id/actor4"
-            
+
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toEndOf="@+id/actor2"
             app:layout_constraintTop_toTopOf="@+id/actor2"
@@ -299,7 +295,7 @@
             android:layout_marginEnd="16dp"
             android:adjustViewBounds="true"
             app:layout_constraintEnd_toEndOf="parent"
-            
+
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toEndOf="@+id/actor3"
             app:layout_constraintTop_toTopOf="@+id/actor3"
