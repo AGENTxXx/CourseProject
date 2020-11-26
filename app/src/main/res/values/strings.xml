@@ -16,4 +16,5 @@
     <string name="movie_details_actor2">Chris Evans</string>
     <string name="movie_details_actor3">Mark Ruffalo</string>
     <string name="movie_details_actor4">Chris Hemsworth</string>
+    <string name="movie_details_reviews_count">125 reviews</string>
 </resources>
