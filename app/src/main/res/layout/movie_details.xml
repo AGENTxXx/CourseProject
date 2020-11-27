@@ -25,12 +25,14 @@
         <ImageView
             android:id="@+id/activity_movie_details_img_gradient_preview"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@+id/activity_movie_details_img_preview"
             app:layout_constraintEnd_toEndOf="@id/activity_movie_details_img_preview"
             app:layout_constraintStart_toStartOf="@id/activity_movie_details_img_preview"
             app:layout_constraintTop_toTopOf="@id/activity_movie_details_img_preview"
-            app:srcCompat="@drawable/mask_back_preview" />
+            app:srcCompat="@drawable/mask_background_preview" />
 
         <TextView
             android:id="@+id/activity_movie_details_tv_back"
@@ -38,7 +40,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="59dp"
-            android:drawableStart="@drawable/ic_back_arrow"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
             android:text="@string/all_back"
@@ -46,7 +47,8 @@
             android:textColor="@color/gray_storm"
             app:drawableTint="@color/gray_storm"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:drawableStartCompat="@drawable/ic_back_arrow" />
 
         <TextView
             android:id="@+id/activity_movie_details_tv_age_rating"
@@ -54,7 +56,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="222dp"
-            android:background="@drawable/age_bg"
+            android:background="@drawable/age_background"
             android:gravity="center"
             android:text="@string/movie_details_ages"
             android:textColor="@color/white"
