@@ -51,7 +51,7 @@
             app:drawableStartCompat="@drawable/ic_back_arrow" />
 
         <TextView
-            android:id="@+id/activity_movie_details_tv_age_rating"
+            android:id="@+id/fragment_movie_list_tv_age_rating"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
@@ -81,7 +81,7 @@
             android:textSize="40sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_movie_details_tv_age_rating"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_movie_list_tv_age_rating"
             app:lineHeight="40sp" />
 
         <TextView

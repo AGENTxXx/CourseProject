@@ -17,4 +17,11 @@
     <string name="movie_details_actor3">Mark Ruffalo</string>
     <string name="movie_details_actor4">Chris Hemsworth</string>
     <string name="movie_details_reviews_count">125 reviews</string>
+
+    <string name="movie_list_movie_length">137 min</string>
+    <string name="movie_list_movie_title">Avengers: End Game</string>
+    <string name="movie_list_movie_reviews">125 reviews</string>
+    <string name="movie_list_movie_genres">Action, Adventure, Drama</string>
+    <string name="movie_list_movies_list">Movies list</string>
+
 </resources>
