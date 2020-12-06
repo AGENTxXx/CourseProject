@@ -23,5 +23,7 @@
     <string name="movie_list_movie_reviews">125 reviews</string>
     <string name="movie_list_movie_genres">Action, Adventure, Drama</string>
     <string name="movie_list_movies_list">Movies list</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
