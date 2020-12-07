@@ -1,15 +1,21 @@
 package com.smog.courseproject
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.card.MaterialCardView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.smog.courseproject.data.Movie
+import com.smog.courseproject.domain.MovieDataSource
 
 class FragmentMoviesList : Fragment() {
     private var listener: CardFragmentClickListener? = null
+    private lateinit var rv: RecyclerView
+    private var adapter = MovieListAdapter()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -29,11 +35,18 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val cv = view.findViewById<MaterialCardView>(R.id.fragment_movie_list_cv_movie)
-
-        cv.setOnClickListener {
-            listener?.cardClick()
+        rv = view.findViewById(R.id.fragment_movies_list_rv)
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            (rv.layoutManager as GridLayoutManager).spanCount = 4
         }
+        rv.adapter = adapter
+        updateData()
+    }
+
+
+    private fun updateData() {
+        adapter.bindMovies(MovieDataSource().getMovies())
+        adapter.notifyDataSetChanged()
     }
 
     override fun onDetach() {
@@ -42,7 +55,7 @@ class FragmentMoviesList : Fragment() {
     }
 
     interface CardFragmentClickListener {
-        fun cardClick()
+        fun cardClick(movie: Movie)
     }
 
     companion object {

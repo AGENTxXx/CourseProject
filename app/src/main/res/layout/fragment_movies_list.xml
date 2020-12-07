@@ -28,26 +28,18 @@
             app:layout_constraintGuide_begin="16dp"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:id="@+id/fragment_movie_list_img_aim"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            app:layout_constraintStart_toStartOf="@+id/start_gl"
-            app:layout_constraintTop_toTopOf="@+id/top_gl"
-            app:srcCompat="@drawable/ic_aim" />
-
         <TextView
             android:id="@+id/fragment_movie_list_tv_movies_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:layout_marginStart="8dp"
+            android:drawableStart="@drawable/ic_aim"
+            android:drawablePadding="8dp"
             android:text="@string/movie_list_movies_list"
             android:textColor="@color/white"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_movie_list_img_aim"
-            app:layout_constraintStart_toEndOf="@+id/fragment_movie_list_img_aim"
-            app:layout_constraintTop_toTopOf="@+id/fragment_movie_list_img_aim" />
+            app:layout_constraintStart_toStartOf="@+id/start_gl"
+            app:layout_constraintTop_toTopOf="@+id/top_gl" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/vertical_center_gl"
@@ -58,26 +50,19 @@
             app:layout_constraintGuide_percent="0.5"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fragment_movies_list_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginTop="30dp"
-            app:layout_constraintEnd_toStartOf="@+id/vertical_center_gl"
+            android:foregroundGravity="center_horizontal"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_movie_list_tv_movies_list">
-
-            <include
-                layout="@layout/item_movie"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@id/start_gl"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/fragment_movie_list_tv_movies_list"
+            app:spanCount="2"
+            tools:listitem="@layout/view_holder_movie" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
