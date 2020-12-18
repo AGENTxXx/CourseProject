@@ -14,8 +14,9 @@ import com.smog.courseproject.domain.MovieDataSource
 
 class FragmentMoviesList : Fragment() {
     private var listener: CardFragmentClickListener? = null
-    private lateinit var rv: RecyclerView
-    private var adapter = MovieListAdapter()
+    private var adapter = MovieListAdapter {
+        listener?.cardClick(it)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -35,7 +36,7 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        rv = view.findViewById(R.id.fragment_movies_list_rv)
+        val rv:RecyclerView = view.findViewById(R.id.fragment_movies_list_rv)
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             (rv.layoutManager as GridLayoutManager).spanCount = 4
         }
@@ -46,7 +47,6 @@ class FragmentMoviesList : Fragment() {
 
     private fun updateData() {
         adapter.bindMovies(MovieDataSource().getMovies())
-        adapter.notifyDataSetChanged()
     }
 
     override fun onDetach() {

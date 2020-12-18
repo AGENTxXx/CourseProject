@@ -11,11 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
+import com.smog.courseproject.Utils.getDrawableFromName
 import com.smog.courseproject.data.Movie
 
-class MovieListAdapter: RecyclerView.Adapter<MovieViewHolder>() {
-
-    private var movies:List<Movie> = listOf()
+class MovieListAdapter(private var movies:List<Movie> = listOf(), private val onMovieClicked: (Movie) -> Unit): RecyclerView.Adapter<MovieViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie,parent,false)
@@ -23,9 +22,9 @@ class MovieListAdapter: RecyclerView.Adapter<MovieViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        holder.onBlind(movies[position])
+        holder.onBind(movies[position])
         holder.itemView.setOnClickListener {
-            (holder.itemView.context as FragmentMoviesList.CardFragmentClickListener).cardClick(movies[position])
+            onMovieClicked(movies[position])
         }
     }
 
@@ -35,6 +34,7 @@ class MovieListAdapter: RecyclerView.Adapter<MovieViewHolder>() {
 
     fun bindMovies(newMovies:List<Movie>) {
         movies = newMovies
+        notifyDataSetChanged()
     }
 }
 
@@ -59,13 +59,13 @@ class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     val img: ImageView = itemView.findViewById(R.id.fragment_movie_list_img_poster)
 
-    fun onBlind(movie:Movie) {
+    fun onBind(movie:Movie) {
         title.text = movie.title
         stars.rating = movie.stars
         rating.text = movie.rating
         genres.text = movie.genres
-        reviews.text = context.getString(R.string.movie_reviews_count,movie.reviewCount.toString())
-        length.text = context.getString(R.string.movie_list_movie_length,movie.length.toString())
+        reviews.text = context.getString(R.string.movie_reviews_count,movie.reviewCount)
+        length.text = context.getString(R.string.movie_list_movie_length,movie.length)
 
         if (movie.isLiked) {
             ImageViewCompat.setImageTintList(like, ColorStateList.valueOf(ContextCompat.getColor(context,R.color.red_radical)))
@@ -74,10 +74,7 @@ class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             like.clearColorFilter()
         }
 
-        val imgPreview = context.resources.getIdentifier(
-            movie.posterLink,
-            "drawable",
-            context.packageName)
+        val imgPreview = getDrawableFromName(context,movie.posterLink)
         img.setImageResource(imgPreview)
     }
 }

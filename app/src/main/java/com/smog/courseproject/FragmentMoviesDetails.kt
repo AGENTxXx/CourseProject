@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.smog.courseproject.data.Movie
 import com.smog.courseproject.domain.ActorDataSource
+import java.lang.IllegalArgumentException
 
 
 /**
@@ -22,16 +23,16 @@ import com.smog.courseproject.domain.ActorDataSource
 
 class FragmentMoviesDetails() : Fragment() {
 
-    private lateinit var movie:Movie
-    private lateinit var rv: RecyclerView
-    private var adapter = ActorListAdapter()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            movie = it.getParcelable("movie")!!
-        }
+    var Bundle.movie:Movie
+    set(value) {
+        this.putParcelable("movie",value)
     }
+    get() {
+        return  this.getParcelable("movie")
+            ?: throw IllegalArgumentException("Provide movie")
+    }
+
+    private var adapter = ActorListAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,15 +45,15 @@ class FragmentMoviesDetails() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val movie: Movie = arguments?.movie!!
 
-
-        val imgPoster = view.findViewById<ImageView>(R.id.activity_movie_details_img_preview)
-        val rating = view.findViewById<TextView>(R.id.fragment_movie_list_tv_age_rating)
-        val title = view.findViewById<TextView>(R.id.activity_movie_details_tv_title)
+        val imgPoster:ImageView = view.findViewById(R.id.activity_movie_details_img_preview)
+        val rating:TextView = view.findViewById(R.id.fragment_movie_list_tv_age_rating)
+        val title:TextView = view.findViewById(R.id.activity_movie_details_tv_title)
         val genres: TextView = view.findViewById(R.id.activity_movie_details_tv_genres)
-        val reviews = view.findViewById<TextView>(R.id.activity_movie_details_tv_reviews)
-        val description = view.findViewById<TextView>(R.id.activity_movie_details_tv_description)
-        var stars: RatingBar = view.findViewById(R.id.activity_movie_details_rb_rating)
+        val reviews:TextView = view.findViewById(R.id.activity_movie_details_tv_reviews)
+        val description:TextView = view.findViewById(R.id.activity_movie_details_tv_description)
+        val stars: RatingBar = view.findViewById(R.id.activity_movie_details_rb_rating)
 
         title.text = movie.title
         stars.rating = movie.stars
@@ -60,18 +61,14 @@ class FragmentMoviesDetails() : Fragment() {
         genres.text = movie.genres
         reviews.text = requireContext().getString(
             R.string.movie_reviews_count,
-            movie.reviewCount.toString()
+            movie.reviewCount
         )
         description.text = movie.description
 
-        val imgPreview = requireContext().resources.getIdentifier(
-            movie.detailLink ?: movie.posterLink,
-            "drawable",
-            requireContext().packageName
-        )
+        val imgPreview = Utils.getDrawableFromName(requireContext(), movie.detailLink ?: movie.posterLink)
         imgPoster.setImageResource(imgPreview)
 
-        rv = view.findViewById(R.id.fragment_movies_details_actors_rv)
+        val rv: RecyclerView = view.findViewById(R.id.fragment_movies_details_actors_rv)
         rv.adapter = adapter
         updateData()
 
@@ -83,15 +80,14 @@ class FragmentMoviesDetails() : Fragment() {
 
     private fun updateData() {
         adapter.bindActors(ActorDataSource().getActors())
-        adapter.notifyDataSetChanged()
     }
 
     companion object {
         @JvmStatic
         fun newInstance(movie: Movie) =
             FragmentMoviesDetails().apply {
-                arguments = Bundle().apply {
-                    putParcelable("movie",movie)
+                arguments = Bundle().also {
+                    it.movie = movie
                 }
             }
 

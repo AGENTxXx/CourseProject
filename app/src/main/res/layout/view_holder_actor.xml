@@ -24,7 +24,7 @@
         android:id="@+id/activity_movie_details_tv_actor_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/movie_details_actor1"
+        tools:text="@string/movie_details_actor1"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/activity_movie_details_img_actor"
