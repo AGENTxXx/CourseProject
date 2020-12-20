@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_weight="1"
-        app:srcCompat="@drawable/moviep1" />
+        app:srcCompat="@drawable/actor_dummy" />
 
     <TextView
         android:id="@+id/activity_movie_details_tv_actor_name"

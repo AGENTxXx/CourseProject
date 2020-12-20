@@ -1,15 +1,13 @@
 package com.smog.courseproject
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.smog.courseproject.data.Movie
 
@@ -43,7 +41,7 @@ class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     private val genres: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_genres)
     private val reviews: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_reviews)
     private val length: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_length)
-    private val rating: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_age_rating)
+    private val minimumAge: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_age_rating)
     private val stars: RatingBar = itemView.findViewById(R.id.fragment_movies_list_rb_rating)
     private val like:ImageView = itemView.findViewById(R.id.fragment_movie_list_img_movie_like)
 
@@ -53,21 +51,19 @@ class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     fun onBind(movie:Movie) {
         title.text = movie.title
-        stars.rating = movie.stars
-        rating.text = movie.rating
-        genres.text = movie.genres
-        reviews.text = context.getString(R.string.movie_reviews_count,movie.reviewCount)
-        length.text = context.getString(R.string.movie_list_movie_length,movie.length)
+        stars.rating = movie.ratings/2
+        minimumAge.text = context.getString(R.string.movie_minimum_age,movie.minimumAge)
+        genres.text = movie.genres.joinToString(", ") { it.name }
+        reviews.text = context.getString(R.string.movie_reviews_count,movie.numberOfRatings)
+        length.text = context.getString(R.string.movie_list_movie_length,movie.runtime)
 
-        if (movie.isLiked) {
-            ImageViewCompat.setImageTintList(like, ColorStateList.valueOf(ContextCompat.getColor(context,R.color.red_radical)))
-        }
-        else {
-            like.clearColorFilter()
-        }
-
-        val imgPreview = getDrawableFromName(context,movie.posterLink)
-        img.setImageResource(imgPreview)
+        Glide.with(context)
+            .load(movie.poster)
+            .apply(
+                RequestOptions.placeholderOf(R.drawable.film_poster_dummy)
+            )
+            .error(R.drawable.film_poster_dummy)
+            .into(img)
     }
 }
 
