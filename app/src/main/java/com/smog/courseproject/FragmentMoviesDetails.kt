@@ -23,15 +23,6 @@ import java.lang.IllegalArgumentException
 
 class FragmentMoviesDetails() : Fragment() {
 
-    var Bundle.movie:Movie
-    set(value) {
-        this.putParcelable("movie",value)
-    }
-    get() {
-        return  this.getParcelable("movie")
-            ?: throw IllegalArgumentException("Provide movie")
-    }
-
     private var adapter = ActorListAdapter()
 
     override fun onCreateView(
@@ -45,7 +36,7 @@ class FragmentMoviesDetails() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val movie: Movie = arguments?.movie!!
+        val movie: Movie = arguments.movie
 
         val imgPoster:ImageView = view.findViewById(R.id.activity_movie_details_img_preview)
         val rating:TextView = view.findViewById(R.id.fragment_movie_list_tv_age_rating)
@@ -65,7 +56,7 @@ class FragmentMoviesDetails() : Fragment() {
         )
         description.text = movie.description
 
-        val imgPreview = Utils.getDrawableFromName(requireContext(), movie.detailLink ?: movie.posterLink)
+        val imgPreview = getDrawableFromName(requireContext(), movie.detailLink ?: movie.posterLink)
         imgPoster.setImageResource(imgPreview)
 
         val rv: RecyclerView = view.findViewById(R.id.fragment_movies_details_actors_rv)
@@ -91,6 +82,14 @@ class FragmentMoviesDetails() : Fragment() {
                 }
             }
 
+        var Bundle?.movie:Movie
+            set(value) {
+                this?.putParcelable("movie",value)
+            }
+            get() {
+                return  this?.getParcelable("movie")
+                    ?: throw IllegalArgumentException("Provide movie")
+            }
     }
 
 }

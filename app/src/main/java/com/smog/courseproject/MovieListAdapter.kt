@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
-import com.smog.courseproject.Utils.getDrawableFromName
 import com.smog.courseproject.data.Movie
 
 class MovieListAdapter(private var movies:List<Movie> = listOf(), private val onMovieClicked: (Movie) -> Unit): RecyclerView.Adapter<MovieViewHolder>() {
@@ -40,20 +39,13 @@ class MovieListAdapter(private var movies:List<Movie> = listOf(), private val on
 
 class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
-    companion object {
-        private val imageOption = RequestOptions()
-            .placeholder(R.drawable.ic_avatar_placeholder)
-            .fallback(R.drawable.ic_avatar_placeholder)
-            .circleCrop()
-    }
-
-    val title: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_title)
-    val genres: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_genres)
-    var reviews: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_reviews)
-    var length: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_length)
-    var rating: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_age_rating)
-    var stars: RatingBar = itemView.findViewById(R.id.fragment_movies_list_rb_rating)
-    var like:ImageView = itemView.findViewById(R.id.fragment_movie_list_img_movie_like)
+    private val title: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_title)
+    private val genres: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_genres)
+    private val reviews: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_reviews)
+    private val length: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_length)
+    private val rating: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_age_rating)
+    private val stars: RatingBar = itemView.findViewById(R.id.fragment_movies_list_rb_rating)
+    private val like:ImageView = itemView.findViewById(R.id.fragment_movie_list_img_movie_like)
 
 
 
