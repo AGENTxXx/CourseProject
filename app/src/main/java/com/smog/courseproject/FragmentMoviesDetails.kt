@@ -9,8 +9,10 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.smog.courseproject.data.Actor
 import com.smog.courseproject.data.Movie
-import com.smog.courseproject.domain.ActorDataSource
 import java.lang.IllegalArgumentException
 
 
@@ -39,38 +41,48 @@ class FragmentMoviesDetails() : Fragment() {
         val movie: Movie = arguments.movie
 
         val imgPoster:ImageView = view.findViewById(R.id.activity_movie_details_img_preview)
-        val rating:TextView = view.findViewById(R.id.fragment_movie_list_tv_age_rating)
+        val minimumAge:TextView = view.findViewById(R.id.fragment_movie_list_tv_age_rating)
         val title:TextView = view.findViewById(R.id.activity_movie_details_tv_title)
         val genres: TextView = view.findViewById(R.id.activity_movie_details_tv_genres)
         val reviews:TextView = view.findViewById(R.id.activity_movie_details_tv_reviews)
         val description:TextView = view.findViewById(R.id.activity_movie_details_tv_description)
         val stars: RatingBar = view.findViewById(R.id.activity_movie_details_rb_rating)
+        val cast:TextView = view.findViewById(R.id.activity_movie_details_tv_cast)
 
         title.text = movie.title
-        stars.rating = movie.stars
-        rating.text = movie.rating
-        genres.text = movie.genres
+        stars.rating = movie.ratings/2
+        minimumAge.text = requireContext().getString(R.string.movie_minimum_age,movie.minimumAge)
+        genres.text = movie.genres.joinToString(", ") { it.name }
         reviews.text = requireContext().getString(
             R.string.movie_reviews_count,
-            movie.reviewCount
+            movie.numberOfRatings
         )
-        description.text = movie.description
+        description.text = movie.overview
 
-        val imgPreview = getDrawableFromName(requireContext(), movie.detailLink ?: movie.posterLink)
-        imgPoster.setImageResource(imgPreview)
-
+        Glide.with(requireContext())
+            .load(movie.backdrop)
+            .apply(
+                RequestOptions.placeholderOf(R.drawable.film_poster_detail_dummy)
+            )
+            .error(R.drawable.film_poster_detail_dummy)
+            .into(imgPoster)
         val rv: RecyclerView = view.findViewById(R.id.fragment_movies_details_actors_rv)
         rv.adapter = adapter
-        updateData()
-
+        if (movie.actors.isNotEmpty()) {
+            cast.visibility = View.VISIBLE
+            updateData(movie.actors)
+        }
+        else {
+            cast.visibility = View.INVISIBLE
+        }
 
         view.findViewById<TextView>(R.id.activity_movie_details_tv_back).setOnClickListener {
             requireActivity().onBackPressed()
         }
     }
 
-    private fun updateData() {
-        adapter.bindActors(ActorDataSource().getActors())
+    private fun updateData(actors:List<Actor>) {
+        adapter.bindActors(actors)
     }
 
     companion object {
