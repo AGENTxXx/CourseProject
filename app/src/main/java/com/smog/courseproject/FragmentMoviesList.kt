@@ -39,10 +39,15 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val rv:RecyclerView = view.findViewById(R.id.fragment_movies_list_rv)
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            (rv.layoutManager as GridLayoutManager).spanCount = 4
-        }
+        val rv: RecyclerView = view.findViewById(R.id.fragment_movies_list_rv)
+        val count =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                4
+            } else {
+                2
+            }
+
+        rv.layoutManager = GridLayoutManager(context, count)
         rv.adapter = adapter
         updateData()
     }
@@ -53,7 +58,6 @@ class FragmentMoviesList : Fragment() {
             val movieList = loadMovies(requireContext())
             adapter.bindMovies(movieList)
         }
-        //adapter.bindMovies(MovieDataSource().getMovies())
     }
 
     override fun onDetach() {

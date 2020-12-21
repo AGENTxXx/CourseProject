@@ -50,22 +50,22 @@ class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val img: ImageView = itemView.findViewById(R.id.fragment_movie_list_img_poster)
 
     fun onBind(movie:Movie) {
+        with(itemView.context) {
+            minimumAge.text = getString(R.string.movie_minimum_age,movie.minimumAge)
+            reviews.text = getString(R.string.movie_reviews_count,movie.numberOfRatings)
+            length.text = getString(R.string.movie_list_movie_length,movie.runtime)
+
+            Glide.with(this@with)
+                .load(movie.poster)
+                .apply(
+                    RequestOptions.placeholderOf(R.drawable.film_poster_dummy)
+                )
+                .error(R.drawable.film_poster_dummy)
+                .into(img)
+        }
+
         title.text = movie.title
         stars.rating = movie.ratings/2
-        minimumAge.text = context.getString(R.string.movie_minimum_age,movie.minimumAge)
         genres.text = movie.genres.joinToString(", ") { it.name }
-        reviews.text = context.getString(R.string.movie_reviews_count,movie.numberOfRatings)
-        length.text = context.getString(R.string.movie_list_movie_length,movie.runtime)
-
-        Glide.with(context)
-            .load(movie.poster)
-            .apply(
-                RequestOptions.placeholderOf(R.drawable.film_poster_dummy)
-            )
-            .error(R.drawable.film_poster_dummy)
-            .into(img)
     }
 }
-
-private val RecyclerView.ViewHolder.context
-    get() = this.itemView.context

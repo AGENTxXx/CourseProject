@@ -44,13 +44,10 @@ class ActorViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     fun onBind(actor:Actor) {
         name.text = actor.name
-        Glide.with(context)
+        Glide.with(itemView.context)
             .load(actor.picture)
             .apply(requestOptions)
             .error(R.drawable.actor_dummy)
             .into(img)
     }
 }
-
-private val RecyclerView.ViewHolder.context
-    get() = this.itemView.context
