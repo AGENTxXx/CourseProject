@@ -68,25 +68,43 @@ internal fun parseActors(data: String): List<Actor> {
 }
 
 @Suppress("unused")
-internal suspend fun loadMovies(context: Context): List<Movie> = withContext(Dispatchers.IO) {
-    val genresMap = loadGenres(context)
-    val actorsMap = loadActors(context)
+internal suspend fun loadMovies(context: Context, start: Int = 0, size: Int = 0): List<Movie> =
+    withContext(Dispatchers.IO) {
+        val genresMap = loadGenres(context)
+        val actorsMap = loadActors(context)
 
-    val data = readAssetFileToString(context, "data.json")
-    parseMovies(data, genresMap, actorsMap)
-}
+        val data = readAssetFileToString(context, "data.json")
+        parseMovies(data, genresMap, actorsMap, start, size)
+    }
 
 internal fun parseMovies(
     data: String,
     genres: List<Genre>,
-    actors: List<Actor>
+    actors: List<Actor>,
+    start: Int,
+    size: Int,
 ): List<Movie> {
     val genresMap = genres.associateBy { it.id }
     val actorsMap = actors.associateBy { it.id }
 
     val jsonMovies = jsonFormat.decodeFromString<List<JsonMovie>>(data)
 
-    return jsonMovies.map { jsonMovie ->
+    if (start*size > jsonMovies.size) {
+        return emptyList()
+    }
+
+    var count: Int
+    count = if (size == 0) {
+        jsonMovies.size - start
+    } else {
+        (start+1) * size
+    }
+
+    if (count > jsonMovies.size) {
+        count = jsonMovies.size
+    }
+
+    return jsonMovies.subList(start*size, count).map { jsonMovie ->
         @Suppress("unused")
         Movie(
             id = jsonMovie.id,
@@ -94,7 +112,7 @@ internal fun parseMovies(
             overview = jsonMovie.overview,
             poster = jsonMovie.posterPicture,
             backdrop = jsonMovie.backdropPicture,
-            ratings = jsonMovie.ratings/2,
+            ratings = jsonMovie.ratings / 2,
             numberOfRatings = jsonMovie.votesCount,
             minimumAge = if (jsonMovie.adult) 16 else 13,
             runtime = jsonMovie.runtime,

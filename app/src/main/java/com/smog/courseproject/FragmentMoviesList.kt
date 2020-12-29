@@ -7,19 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smog.courseproject.data.Movie
-import com.smog.courseproject.data.loadMovies
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class FragmentMoviesList : Fragment() {
     private var listener: CardFragmentClickListener? = null
-    private var adapter = MovieListAdapter {
-        listener?.cardClick(it)
-    }
+    private lateinit var adapter:MovieListAdapter
+    private lateinit var viewModel: MoviesListViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -39,6 +38,10 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel = MoviesListViewModel()
+        adapter = MovieListAdapter {
+            listener?.cardClick(it)
+        }
         val rv: RecyclerView = view.findViewById(R.id.fragment_movies_list_rv)
         val count = when(resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> 4
@@ -47,14 +50,14 @@ class FragmentMoviesList : Fragment() {
 
         rv.layoutManager = GridLayoutManager(context, count)
         rv.adapter = adapter
-        updateData()
+        fetchMovies()
     }
 
-
-    private fun updateData() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val movieList = loadMovies(requireContext())
-            adapter.bindMovies(movieList)
+    private fun fetchMovies() {
+        lifecycleScope.launch {
+            viewModel.fetchMovies(requireContext()).distinctUntilChanged().collectLatest {
+                adapter.submitData(it)
+            }
         }
     }
 
