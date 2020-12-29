@@ -25,6 +25,7 @@ import java.lang.IllegalArgumentException
 class FragmentMoviesDetails() : Fragment() {
 
     private var adapter = ActorListAdapter()
+    private var viewModel:MoviesDetailsViewModel = MoviesDetailsViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +39,16 @@ class FragmentMoviesDetails() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val movie: Movie = arguments.movie
+        viewModel.movie.observe(this.viewLifecycleOwner,this::initMovieData)
+        viewModel.movieFormatter(movie)
 
+        view.findViewById<TextView>(R.id.activity_movie_details_tv_back).setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+    }
+
+    private fun initMovieData(movie: Movie) {
+        val view = requireView()
         val imgPoster:ImageView = view.findViewById(R.id.activity_movie_details_img_preview)
         val minimumAge:TextView = view.findViewById(R.id.fragment_movie_list_tv_age_rating)
         val title:TextView = view.findViewById(R.id.activity_movie_details_tv_title)
@@ -70,10 +80,6 @@ class FragmentMoviesDetails() : Fragment() {
         } else {
             adapter.bindActors(movie.actors)
             View.VISIBLE
-        }
-
-        view.findViewById<TextView>(R.id.activity_movie_details_tv_back).setOnClickListener {
-            requireActivity().onBackPressed()
         }
     }
 

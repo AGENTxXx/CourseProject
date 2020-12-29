@@ -9,8 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.smog.courseproject.data.Movie
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 
-class MovieListAdapter(private var movies:List<Movie> = listOf(), private val onMovieClicked: (Movie) -> Unit): RecyclerView.Adapter<MovieViewHolder>() {
+class MovieListAdapter(private val onMovieClicked: (Movie) -> Unit): PagingDataAdapter<Movie,MovieViewHolder>(REPO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie,parent,false)
@@ -18,19 +20,22 @@ class MovieListAdapter(private var movies:List<Movie> = listOf(), private val on
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        holder.onBind(movies[position])
+        holder.onBind(getItem(position)!!)
         holder.itemView.setOnClickListener {
-            onMovieClicked(movies[position])
+            onMovieClicked(getItem(position)!!)
         }
     }
 
-    override fun getItemCount(): Int {
-        return movies.size
-    }
+    companion object {
+        private val REPO_COMPARATOR = object: DiffUtil.ItemCallback<Movie>() {
+            override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+                return oldItem.id == newItem.id
+            }
 
-    fun bindMovies(newMovies:List<Movie>) {
-        movies = newMovies
-        notifyDataSetChanged()
+            override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 }
 
@@ -66,3 +71,4 @@ class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         genres.text = movie.genres.joinToString(", ") { it.name }
     }
 }
+
