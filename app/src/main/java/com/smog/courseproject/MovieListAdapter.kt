@@ -8,7 +8,6 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.smog.courseproject.data.Movie
 
 class MovieListAdapter(private var movies:List<Movie> = listOf(), private val onMovieClicked: (Movie) -> Unit): RecyclerView.Adapter<MovieViewHolder>() {
@@ -57,15 +56,13 @@ class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             Glide.with(this@with)
                 .load(movie.poster)
-                .apply(
-                    RequestOptions.placeholderOf(R.drawable.film_poster_dummy)
-                )
+                .placeholder(R.drawable.film_poster_dummy)
                 .error(R.drawable.film_poster_dummy)
                 .into(img)
         }
 
         title.text = movie.title
-        stars.rating = movie.ratings/2
+        stars.rating = movie.ratings
         genres.text = movie.genres.joinToString(", ") { it.name }
     }
 }

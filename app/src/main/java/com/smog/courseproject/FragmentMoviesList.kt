@@ -40,12 +40,10 @@ class FragmentMoviesList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val rv: RecyclerView = view.findViewById(R.id.fragment_movies_list_rv)
-        val count =
-            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                4
-            } else {
-                2
-            }
+        val count = when(resources.configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> 4
+            else -> 2
+        }
 
         rv.layoutManager = GridLayoutManager(context, count)
         rv.adapter = adapter

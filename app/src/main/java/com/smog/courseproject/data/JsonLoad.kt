@@ -94,7 +94,7 @@ internal fun parseMovies(
             overview = jsonMovie.overview,
             poster = jsonMovie.posterPicture,
             backdrop = jsonMovie.backdropPicture,
-            ratings = jsonMovie.ratings,
+            ratings = jsonMovie.ratings/2,
             numberOfRatings = jsonMovie.votesCount,
             minimumAge = if (jsonMovie.adult) 16 else 13,
             runtime = jsonMovie.runtime,

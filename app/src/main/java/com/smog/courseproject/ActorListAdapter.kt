@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.smog.courseproject.data.Actor
 
 class ActorListAdapter(private var actors:List<Actor> = listOf()): RecyclerView.Adapter<ActorViewHolder>() {
@@ -38,15 +37,12 @@ class ActorViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val name:TextView = itemView.findViewById(R.id.activity_movie_details_tv_actor_name)
     val img:ImageView = itemView.findViewById(R.id.activity_movie_details_img_actor)
 
-    val requestOptions: RequestOptions = RequestOptions()
-        .placeholder(R.drawable.actor_dummy)
-        .transform(CenterCrop(), RoundedCorners(16))
-
     fun onBind(actor:Actor) {
         name.text = actor.name
         Glide.with(itemView.context)
             .load(actor.picture)
-            .apply(requestOptions)
+            .placeholder(R.drawable.actor_dummy)
+            .transform(CenterCrop(), RoundedCorners(16))
             .error(R.drawable.actor_dummy)
             .into(img)
     }

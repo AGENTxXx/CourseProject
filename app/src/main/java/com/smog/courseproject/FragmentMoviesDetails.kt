@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.smog.courseproject.data.Actor
 import com.smog.courseproject.data.Movie
 import java.lang.IllegalArgumentException
@@ -50,10 +49,10 @@ class FragmentMoviesDetails() : Fragment() {
         val cast:TextView = view.findViewById(R.id.activity_movie_details_tv_cast)
 
         title.text = movie.title
-        stars.rating = movie.ratings/2
-        minimumAge.text = requireContext().getString(R.string.movie_minimum_age,movie.minimumAge)
+        stars.rating = movie.ratings
+        minimumAge.text = getString(R.string.movie_minimum_age,movie.minimumAge)
         genres.text = movie.genres.joinToString(", ") { it.name }
-        reviews.text = requireContext().getString(
+        reviews.text = getString(
             R.string.movie_reviews_count,
             movie.numberOfRatings
         )
@@ -61,28 +60,21 @@ class FragmentMoviesDetails() : Fragment() {
 
         Glide.with(requireContext())
             .load(movie.backdrop)
-            .apply(
-                RequestOptions.placeholderOf(R.drawable.film_poster_detail_dummy)
-            )
+            .placeholder(R.drawable.film_poster_detail_dummy)
             .error(R.drawable.film_poster_detail_dummy)
             .into(imgPoster)
         val rv: RecyclerView = view.findViewById(R.id.fragment_movies_details_actors_rv)
         rv.adapter = adapter
-        if (movie.actors.isNotEmpty()) {
-            cast.visibility = View.VISIBLE
-            updateData(movie.actors)
-        }
-        else {
-            cast.visibility = View.INVISIBLE
+        cast.visibility =if (movie.actors.isEmpty()) {
+            View.INVISIBLE
+        } else {
+            adapter.bindActors(movie.actors)
+            View.VISIBLE
         }
 
         view.findViewById<TextView>(R.id.activity_movie_details_tv_back).setOnClickListener {
             requireActivity().onBackPressed()
         }
-    }
-
-    private fun updateData(actors:List<Actor>) {
-        adapter.bindActors(actors)
     }
 
     companion object {
