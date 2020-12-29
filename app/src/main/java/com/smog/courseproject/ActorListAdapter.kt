@@ -7,7 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.smog.courseproject.data.Actor
 
 class ActorListAdapter(private var actors:List<Actor> = listOf()): RecyclerView.Adapter<ActorViewHolder>() {
@@ -38,10 +39,11 @@ class ActorViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     fun onBind(actor:Actor) {
         name.text = actor.name
-        val imgPreview = getDrawableFromName(context, actor.imgLink)
-        img.setImageResource(imgPreview)
+        Glide.with(itemView.context)
+            .load(actor.picture)
+            .placeholder(R.drawable.actor_dummy)
+            .transform(CenterCrop(), RoundedCorners(16))
+            .error(R.drawable.actor_dummy)
+            .into(img)
     }
 }
-
-private val RecyclerView.ViewHolder.context
-    get() = this.itemView.context

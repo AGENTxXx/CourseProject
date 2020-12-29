@@ -10,7 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smog.courseproject.data.Movie
-import com.smog.courseproject.domain.MovieDataSource
+import com.smog.courseproject.data.loadMovies
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FragmentMoviesList : Fragment() {
     private var listener: CardFragmentClickListener? = null
@@ -36,17 +39,23 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val rv:RecyclerView = view.findViewById(R.id.fragment_movies_list_rv)
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            (rv.layoutManager as GridLayoutManager).spanCount = 4
+        val rv: RecyclerView = view.findViewById(R.id.fragment_movies_list_rv)
+        val count = when(resources.configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> 4
+            else -> 2
         }
+
+        rv.layoutManager = GridLayoutManager(context, count)
         rv.adapter = adapter
         updateData()
     }
 
 
     private fun updateData() {
-        adapter.bindMovies(MovieDataSource().getMovies())
+        CoroutineScope(Dispatchers.Main).launch {
+            val movieList = loadMovies(requireContext())
+            adapter.bindMovies(movieList)
+        }
     }
 
     override fun onDetach() {
