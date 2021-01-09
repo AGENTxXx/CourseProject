@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smog.courseproject.data.Movie
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class FragmentMoviesList : Fragment() {
@@ -55,9 +54,15 @@ class FragmentMoviesList : Fragment() {
 
     private fun fetchMovies() {
         lifecycleScope.launch {
-            viewModel.fetchMovies(requireContext()).distinctUntilChanged().collectLatest {
-                adapter.submitData(it)
-            }
+            /**todo здесь необходим контекст application
+             *  потому что у нас MoviePagingSource хранит в себе ссылку на context
+             *  а если мы передадим контекст фрагмента, то при пересоздании возникнет memoryLeak
+             *
+             *  (если что в будущем благодаря DI из метода fetchMovies мы уберем context вообще)
+             */
+            viewModel
+                .fetchMovies(requireActivity().applicationContext)
+                .collectLatest { adapter.submitData(it) }
         }
     }
 
