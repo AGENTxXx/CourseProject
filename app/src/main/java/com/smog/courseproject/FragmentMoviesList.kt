@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,8 +18,12 @@ import kotlinx.coroutines.launch
 
 class FragmentMoviesList : Fragment() {
     private var listener: CardFragmentClickListener? = null
-    private lateinit var adapter:MovieListAdapter
-    private lateinit var viewModel: MoviesListViewModel
+    private var adapter:MovieListAdapter = MovieListAdapter {
+        listener?.cardClick(it)
+    }
+    private val viewModel: MoviesListViewModel by viewModels {
+        MoviesListViewModelFactory()
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -38,10 +43,6 @@ class FragmentMoviesList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = MoviesListViewModel()
-        adapter = MovieListAdapter {
-            listener?.cardClick(it)
-        }
         val rv: RecyclerView = view.findViewById(R.id.fragment_movies_list_rv)
         val count = when(resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> 4
@@ -55,7 +56,7 @@ class FragmentMoviesList : Fragment() {
 
     private fun fetchMovies() {
         lifecycleScope.launch {
-            viewModel.fetchMovies(requireContext()).distinctUntilChanged().collectLatest {
+            viewModel.fetchMovies(requireActivity().applicationContext).distinctUntilChanged().collectLatest {
                 adapter.submitData(it)
             }
         }

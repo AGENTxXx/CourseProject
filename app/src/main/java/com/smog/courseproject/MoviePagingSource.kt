@@ -9,7 +9,7 @@ import com.smog.courseproject.data.loadMovies
 import java.io.IOException
 
 fun getDefaultPageConfig(): PagingConfig {
-    return PagingConfig(pageSize = 6, enablePlaceholders = false)
+    return PagingConfig(pageSize = 6, enablePlaceholders = false, initialLoadSize = 6)
 }
 
 class MoviePagingSource(

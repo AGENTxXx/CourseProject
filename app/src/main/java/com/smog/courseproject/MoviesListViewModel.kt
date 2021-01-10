@@ -18,7 +18,6 @@ class MoviesListViewModel : ViewModel() {
 
     fun fetchMovies(context: Context): Flow<PagingData<Movie>> {
         return letMoviesFlow(context)
-            .map {it.map { movie -> movie } }
             .cachedIn(viewModelScope)
     }
 

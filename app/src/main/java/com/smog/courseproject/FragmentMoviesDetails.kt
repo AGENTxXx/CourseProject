@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.smog.courseproject.data.Actor
@@ -25,7 +26,9 @@ import java.lang.IllegalArgumentException
 class FragmentMoviesDetails() : Fragment() {
 
     private var adapter = ActorListAdapter()
-    private var viewModel:MoviesDetailsViewModel = MoviesDetailsViewModel()
+    private val viewModel:MoviesDetailsViewModel by viewModels {
+        MoviesDetailsViewModelFactory(arguments.movie)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,9 +41,7 @@ class FragmentMoviesDetails() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val movie: Movie = arguments.movie
-        viewModel.movie.observe(this.viewLifecycleOwner,this::initMovieData)
-        viewModel.movieFormatter(movie)
+        viewModel.movieLiveData.observe(viewLifecycleOwner,::initMovieData)
 
         view.findViewById<TextView>(R.id.activity_movie_details_tv_back).setOnClickListener {
             requireActivity().onBackPressed()

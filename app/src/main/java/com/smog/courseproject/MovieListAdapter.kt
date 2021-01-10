@@ -12,7 +12,7 @@ import com.smog.courseproject.data.Movie
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 
-class MovieListAdapter(private val onMovieClicked: (Movie) -> Unit): PagingDataAdapter<Movie,MovieViewHolder>(REPO_COMPARATOR) {
+class MovieListAdapter(private val onMovieClicked: (Movie) -> Unit): PagingDataAdapter<Movie,MovieViewHolder>(moviewItemCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie,parent,false)
@@ -27,7 +27,7 @@ class MovieListAdapter(private val onMovieClicked: (Movie) -> Unit): PagingDataA
     }
 
     companion object {
-        private val REPO_COMPARATOR = object: DiffUtil.ItemCallback<Movie>() {
+        private val moviewItemCallback = object: DiffUtil.ItemCallback<Movie>() {
             override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
                 return oldItem.id == newItem.id
             }
