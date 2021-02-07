@@ -11,8 +11,9 @@ import com.bumptech.glide.Glide
 import com.smog.courseproject.data.Movie
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import com.smog.courseproject.data.MovieDb
 
-class MovieListAdapter(private val onMovieClicked: (Movie) -> Unit): PagingDataAdapter<Movie,MovieViewHolder>(moviewItemCallback) {
+class MovieListAdapter(private val onMovieClicked: (MovieDb) -> Unit): PagingDataAdapter<MovieDb,MovieViewHolder>(moviewItemCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie,parent,false)
@@ -27,12 +28,12 @@ class MovieListAdapter(private val onMovieClicked: (Movie) -> Unit): PagingDataA
     }
 
     companion object {
-        private val moviewItemCallback = object: DiffUtil.ItemCallback<Movie>() {
-            override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+        private val moviewItemCallback = object: DiffUtil.ItemCallback<MovieDb>() {
+            override fun areItemsTheSame(oldItem: MovieDb, newItem: MovieDb): Boolean {
                 return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+            override fun areContentsTheSame(oldItem: MovieDb, newItem: MovieDb): Boolean {
                 return oldItem == newItem
             }
         }
@@ -53,22 +54,24 @@ class MovieViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     val img: ImageView = itemView.findViewById(R.id.fragment_movie_list_img_poster)
 
-    fun onBind(movie:Movie) {
+    fun onBind(movie:MovieDb) {
         with(itemView.context) {
-            minimumAge.text = getString(R.string.movie_minimum_age,movie.minimumAge)
-            reviews.text = getString(R.string.movie_reviews_count,movie.numberOfRatings)
-            length.text = getString(R.string.movie_list_movie_length,movie.runtime)
+            minimumAge.text = getString(R.string.movie_minimum_age,if (movie.adult!!) 18 else 13)
+            reviews.text = getString(R.string.movie_reviews_count,movie.voteCount)
+            length.text = getString(R.string.movie_list_movie_length,0)
+            //length.text = getString(R.string.movie_list_movie_length,movie.runtime)
 
             Glide.with(this@with)
-                .load(movie.poster)
+                .load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2/" + movie.posterPath)
                 .placeholder(R.drawable.film_poster_dummy)
                 .error(R.drawable.film_poster_dummy)
                 .into(img)
         }
 
         title.text = movie.title
-        stars.rating = movie.ratings
-        genres.text = movie.genres.joinToString(", ") { it.name }
+        stars.rating = (movie.voteAverage?.div(2))?.toFloat()!!
+        genres.text = movie.genreIds?.map { FragmentMoviesList.genres[it] }?.joinToString(", ")
+        //genres.text = movie.genres.joinToString(", ") { it.name }
     }
 }
 

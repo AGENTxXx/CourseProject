@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.smog.courseproject.data.Movie
+import com.smog.courseproject.data.MovieDb
 import com.smog.courseproject.data.loadMovies
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +17,12 @@ import kotlinx.coroutines.launch
 
 class MoviesListViewModel : ViewModel() {
 
-    fun fetchMovies(context: Context): Flow<PagingData<Movie>> {
+    fun fetchMovies(context: Context): Flow<PagingData<MovieDb>> {
         return letMoviesFlow(context)
             .cachedIn(viewModelScope)
     }
 
-    private fun letMoviesFlow(context:Context, pagingConfig: PagingConfig = getDefaultPageConfig()): Flow<PagingData<Movie>> {
+    private fun letMoviesFlow(context:Context, pagingConfig: PagingConfig = getDefaultPageConfig()): Flow<PagingData<MovieDb>> {
         return Pager(
             config = pagingConfig,
             pagingSourceFactory = { MoviePagingSource(context) }

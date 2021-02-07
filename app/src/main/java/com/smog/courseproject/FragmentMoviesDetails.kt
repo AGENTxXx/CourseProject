@@ -11,8 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.smog.courseproject.data.Actor
-import com.smog.courseproject.data.Movie
+import com.smog.courseproject.data.MovieDb
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.IllegalArgumentException
 
 
@@ -48,7 +51,7 @@ class FragmentMoviesDetails() : Fragment() {
         }
     }
 
-    private fun initMovieData(movie: Movie) {
+    private fun initMovieData(movie: MovieDb) {
         val view = requireView()
         val imgPoster:ImageView = view.findViewById(R.id.activity_movie_details_img_preview)
         val minimumAge:TextView = view.findViewById(R.id.fragment_movie_list_tv_age_rating)
@@ -60,40 +63,57 @@ class FragmentMoviesDetails() : Fragment() {
         val cast:TextView = view.findViewById(R.id.activity_movie_details_tv_cast)
 
         title.text = movie.title
-        stars.rating = movie.ratings
-        minimumAge.text = getString(R.string.movie_minimum_age,movie.minimumAge)
-        genres.text = movie.genres.joinToString(", ") { it.name }
-        reviews.text = getString(
-            R.string.movie_reviews_count,
-            movie.numberOfRatings
-        )
+        //stars.rating = movie.ratings
+        stars.rating = (movie.voteAverage?.div(2))?.toFloat()!!
+        minimumAge.text = getString(R.string.movie_minimum_age,if (movie.adult!!) 18 else 13)
+        genres.text = movie.genreIds?.map { FragmentMoviesList.genres[it] }?.joinToString(", ")
+        reviews.text = getString(R.string.movie_reviews_count,movie.voteCount)
         description.text = movie.overview
 
         Glide.with(requireContext())
-            .load(movie.backdrop)
+            .load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2/" + movie.backdropPath)
             .placeholder(R.drawable.film_poster_detail_dummy)
             .error(R.drawable.film_poster_detail_dummy)
             .into(imgPoster)
         val rv: RecyclerView = view.findViewById(R.id.fragment_movies_details_actors_rv)
         rv.adapter = adapter
+
+        GlobalScope.launch() {
+            withContext(Dispatchers.IO) {
+                val result = RetrofitModule.moviesApi.getMovieCredits(movie.id!!)
+                val credits = result.body()!!.cast
+
+                withContext(Dispatchers.Main) {
+                    cast.visibility =if (credits == null) {
+                        View.INVISIBLE
+                    } else {
+                        adapter.bindActors(credits)
+                        View.VISIBLE
+                    }
+                }
+            }
+        }
+
+        /*
         cast.visibility =if (movie.actors.isEmpty()) {
             View.INVISIBLE
         } else {
             adapter.bindActors(movie.actors)
             View.VISIBLE
         }
+        */
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(movie: Movie) =
+        fun newInstance(movie: MovieDb) =
             FragmentMoviesDetails().apply {
                 arguments = Bundle().also {
                     it.movie = movie
                 }
             }
 
-        var Bundle?.movie:Movie
+        var Bundle?.movie:MovieDb
             set(value) {
                 this?.putParcelable("movie",value)
             }

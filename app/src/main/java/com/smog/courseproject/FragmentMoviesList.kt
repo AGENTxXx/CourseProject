@@ -6,15 +6,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.collection.ArrayMap
+import androidx.collection.arrayMapOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.smog.courseproject.data.Movie
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.smog.courseproject.data.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import retrofit2.Retrofit
+import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.Response
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 class FragmentMoviesList : Fragment() {
     private var listener: CardFragmentClickListener? = null
@@ -51,14 +63,20 @@ class FragmentMoviesList : Fragment() {
 
         rv.layoutManager = GridLayoutManager(context, count)
         rv.adapter = adapter
-        fetchMovies()
+
+        lifecycleScope.launch {
+            val result = RetrofitModule.moviesApi.getGenres()
+            result.body()?.genres?.forEach {
+                genres[it.id] = it.name
+            }
+
+            fetchMovies()
+        }
     }
 
-    private fun fetchMovies() {
-        lifecycleScope.launch {
-            viewModel.fetchMovies(requireActivity().applicationContext).distinctUntilChanged().collectLatest {
-                adapter.submitData(it)
-            }
+    private suspend fun fetchMovies() {
+        viewModel.fetchMovies(requireActivity().applicationContext).distinctUntilChanged().collectLatest {
+            adapter.submitData(it)
         }
     }
 
@@ -68,12 +86,43 @@ class FragmentMoviesList : Fragment() {
     }
 
     interface CardFragmentClickListener {
-        fun cardClick(movie: Movie)
+        fun cardClick(movie: MovieDb)
     }
 
     companion object {
+        var genres: ArrayMap<Int, String> = arrayMapOf()
         @JvmStatic
         fun newInstance() =
             FragmentMoviesList()
     }
+}
+
+internal interface MoviesApi {
+    @GET("genre/movie/list?api_key=${BuildConfig.API_KEY}")
+    suspend fun getGenres(): Response<GenreResponse>
+
+    @GET("movie/popular?api_key=${BuildConfig.API_KEY}")
+    suspend fun getMovies(@Query("page") pageNum:Int): Response<Popular>
+
+    @GET("movie/{movieId}?api_key=${BuildConfig.API_KEY}")
+    suspend fun getMovieInfo(@Path("movieId") movieId:Int): Response<MovieExtraDb>
+
+    @GET("movie/{movieId}/credits?api_key=${BuildConfig.API_KEY}")
+    suspend fun getMovieCredits(@Path("movieId") movieId:Int): Response<CreditDb>
+}
+
+internal object RetrofitModule {
+
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
+
+    @Suppress("EXPERIMENTAL_API_USAGE")
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
+        //.addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val moviesApi: MoviesApi = retrofit.create()
 }
