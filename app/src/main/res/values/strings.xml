@@ -18,8 +18,4 @@
 
     <string name="movie_list_movie_length">%1$d min</string>
     <string name="movie_list_movies_list">Movies list</string>
-
-    <!--
-    <string name="API_KEY">6957c7c7ff4cb17fb5d606ddeb4621c9</string>
-    -->
 </resources>

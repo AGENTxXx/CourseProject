@@ -11,12 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.smog.courseproject.data.MovieDb
+import com.smog.courseproject.MainActivity.Companion.dbApp
+import com.smog.courseproject.data.CastEntity
+import com.smog.courseproject.data.MovieCastEntity
+import com.smog.courseproject.data.MovieEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.IllegalArgumentException
+import java.io.IOException
 
 
 /**
@@ -29,7 +32,7 @@ import java.lang.IllegalArgumentException
 class FragmentMoviesDetails() : Fragment() {
 
     private var adapter = ActorListAdapter()
-    private val viewModel:MoviesDetailsViewModel by viewModels {
+    private val viewModel: MoviesDetailsViewModel by viewModels {
         MoviesDetailsViewModelFactory(arguments.movie)
     }
 
@@ -44,30 +47,42 @@ class FragmentMoviesDetails() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.movieLiveData.observe(viewLifecycleOwner,::initMovieData)
+        viewModel.movieLiveData.observe(viewLifecycleOwner, ::initMovieData)
+
+        viewModel.getCredits(arguments.movie.id!!).observe(viewLifecycleOwner, ::showMovieCredits)
 
         view.findViewById<TextView>(R.id.activity_movie_details_tv_back).setOnClickListener {
             requireActivity().onBackPressed()
         }
     }
 
-    private fun initMovieData(movie: MovieDb) {
+    private fun showMovieCredits(credits:List<CastEntity>) {
         val view = requireView()
-        val imgPoster:ImageView = view.findViewById(R.id.activity_movie_details_img_preview)
-        val minimumAge:TextView = view.findViewById(R.id.fragment_movie_list_tv_age_rating)
-        val title:TextView = view.findViewById(R.id.activity_movie_details_tv_title)
+        val cast: TextView = view.findViewById(R.id.activity_movie_details_tv_cast)
+
+        cast.visibility = if (credits.isEmpty()) {
+            View.INVISIBLE
+        } else {
+            adapter.bindActors(credits)
+            View.VISIBLE
+        }
+    }
+
+    private fun initMovieData(movie: MovieEntity) {
+        val view = requireView()
+        val imgPoster: ImageView = view.findViewById(R.id.activity_movie_details_img_preview)
+        val minimumAge: TextView = view.findViewById(R.id.fragment_movie_list_tv_age_rating)
+        val title: TextView = view.findViewById(R.id.activity_movie_details_tv_title)
         val genres: TextView = view.findViewById(R.id.activity_movie_details_tv_genres)
-        val reviews:TextView = view.findViewById(R.id.activity_movie_details_tv_reviews)
-        val description:TextView = view.findViewById(R.id.activity_movie_details_tv_description)
+        val reviews: TextView = view.findViewById(R.id.activity_movie_details_tv_reviews)
+        val description: TextView = view.findViewById(R.id.activity_movie_details_tv_description)
         val stars: RatingBar = view.findViewById(R.id.activity_movie_details_rb_rating)
-        val cast:TextView = view.findViewById(R.id.activity_movie_details_tv_cast)
 
         title.text = movie.title
-        //stars.rating = movie.ratings
         stars.rating = (movie.voteAverage?.div(2))?.toFloat()!!
-        minimumAge.text = getString(R.string.movie_minimum_age,if (movie.adult!!) 18 else 13)
+        minimumAge.text = getString(R.string.movie_minimum_age, if (movie.adult!!) 18 else 13)
         genres.text = movie.genreIds?.map { FragmentMoviesList.genres[it] }?.joinToString(", ")
-        reviews.text = getString(R.string.movie_reviews_count,movie.voteCount)
+        reviews.text = getString(R.string.movie_reviews_count, movie.voteCount)
         description.text = movie.overview
 
         Glide.with(requireContext())
@@ -77,48 +92,23 @@ class FragmentMoviesDetails() : Fragment() {
             .into(imgPoster)
         val rv: RecyclerView = view.findViewById(R.id.fragment_movies_details_actors_rv)
         rv.adapter = adapter
-
-        GlobalScope.launch() {
-            withContext(Dispatchers.IO) {
-                val result = RetrofitModule.moviesApi.getMovieCredits(movie.id!!)
-                val credits = result.body()!!.cast
-
-                withContext(Dispatchers.Main) {
-                    cast.visibility =if (credits == null) {
-                        View.INVISIBLE
-                    } else {
-                        adapter.bindActors(credits)
-                        View.VISIBLE
-                    }
-                }
-            }
-        }
-
-        /*
-        cast.visibility =if (movie.actors.isEmpty()) {
-            View.INVISIBLE
-        } else {
-            adapter.bindActors(movie.actors)
-            View.VISIBLE
-        }
-        */
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(movie: MovieDb) =
+        fun newInstance(movie: MovieEntity) =
             FragmentMoviesDetails().apply {
                 arguments = Bundle().also {
                     it.movie = movie
                 }
             }
 
-        var Bundle?.movie:MovieDb
+        var Bundle?.movie: MovieEntity
             set(value) {
-                this?.putParcelable("movie",value)
+                this?.putParcelable("movie", value)
             }
             get() {
-                return  this?.getParcelable("movie")
+                return this?.getParcelable("movie")
                     ?: throw IllegalArgumentException("Provide movie")
             }
     }

@@ -1,7 +1,6 @@
 package com.smog.courseproject.data
 
 import com.google.gson.annotations.SerializedName
-import com.smog.courseproject.data.MovieDb
 
 data class Popular(
 
@@ -12,7 +11,7 @@ data class Popular(
 	val totalPages: Int? = null,
 
 	@field:SerializedName("results")
-	val results: List<MovieDb>? = null,
+	val results: List<MovieEntity>? = null,
 
 	@field:SerializedName("total_results")
 	val totalResults: Int? = null

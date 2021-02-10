@@ -1,19 +1,29 @@
 package com.smog.courseproject
 
 import android.os.Bundle
-import android.view.Window
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.smog.courseproject.data.Movie
-import com.smog.courseproject.data.MovieDb
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.room.Room
+import com.smog.courseproject.data.MovieEntity
+import com.smog.courseproject.database.AppDatabase
+
 
 class MainActivity : AppCompatActivity(), FragmentMoviesList.CardFragmentClickListener {
+
+    companion object {
+        lateinit var dbApp: AppDatabase
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+        dbApp = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "database"
+        )
+            .allowMainThreadQueries()
+            .build()
 
         getPreferences(MODE_PRIVATE)
         if (savedInstanceState == null) {
@@ -23,7 +33,7 @@ class MainActivity : AppCompatActivity(), FragmentMoviesList.CardFragmentClickLi
         }
     }
 
-    override fun cardClick(movie: MovieDb) {
+    override fun cardClick(movie: MovieEntity) {
         supportFragmentManager.beginTransaction()
             .addToBackStack(null)
             .add(R.id.activity_main_fl, FragmentMoviesDetails.newInstance(movie), "second")

@@ -2,10 +2,9 @@ package com.smog.courseproject
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.smog.courseproject.data.Movie
-import com.smog.courseproject.data.MovieDb
+import com.smog.courseproject.data.MovieEntity
 
-class MoviesDetailsViewModelFactory(private val movie:MovieDb): ViewModelProvider.Factory {
+class MoviesDetailsViewModelFactory(private val movie:MovieEntity): ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T = when (modelClass) {
         MoviesDetailsViewModel::class.java -> MoviesDetailsViewModel(movie)

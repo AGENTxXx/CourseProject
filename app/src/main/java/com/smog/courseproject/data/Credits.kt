@@ -1,21 +1,25 @@
 package com.smog.courseproject.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-data class CreditDb(
+data class Credits(
 
 	@field:SerializedName("cast")
-	val cast: List<CastItem>? = null,
+	val cast: List<CastEntity>? = null,
 
 	@field:SerializedName("id")
 	val id: Int? = null,
 
 	@field:SerializedName("crew")
-	val crew: List<CrewItem?>? = null
+	val crew: List<CrewEntity?>? = null
 )
 
-data class CastItem(
+@Entity(tableName = "casts")
+data class CastEntity(
 
+	@PrimaryKey
 	@field:SerializedName("cast_id")
 	val castId: Int? = null,
 
@@ -53,7 +57,8 @@ data class CastItem(
 	val order: Int? = null
 )
 
-data class CrewItem(
+@Entity(tableName = "crews")
+data class CrewEntity(
 
 	@field:SerializedName("gender")
 	val gender: Int? = null,
@@ -74,8 +79,9 @@ data class CrewItem(
 	val name: String? = null,
 
 	@field:SerializedName("profile_path")
-	val profilePath: Any? = null,
+	val profilePath: String? = null,
 
+	@PrimaryKey
 	@field:SerializedName("id")
 	val id: Int? = null,
 
