@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.smog.courseproject.data.Actor
+import com.smog.courseproject.data.CastEntity
 
-class ActorListAdapter(private var actors:List<Actor> = listOf()): RecyclerView.Adapter<ActorViewHolder>() {
+class ActorListAdapter(private var actors: List<CastEntity> = listOf()) :
+    RecyclerView.Adapter<ActorViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorViewHolder {
-        val view:View = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_actor,parent,false)
+        val view: View =
+            LayoutInflater.from(parent.context).inflate(R.layout.view_holder_actor, parent, false)
         return ActorViewHolder(view)
     }
 
@@ -26,21 +28,21 @@ class ActorListAdapter(private var actors:List<Actor> = listOf()): RecyclerView.
         return actors.size
     }
 
-    fun bindActors(newActors: List<Actor>) {
+    fun bindActors(newActors: List<CastEntity>) {
         actors = newActors
         notifyDataSetChanged()
     }
 }
 
-class ActorViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+class ActorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    val name:TextView = itemView.findViewById(R.id.activity_movie_details_tv_actor_name)
-    val img:ImageView = itemView.findViewById(R.id.activity_movie_details_img_actor)
+    val name: TextView = itemView.findViewById(R.id.activity_movie_details_tv_actor_name)
+    val img: ImageView = itemView.findViewById(R.id.activity_movie_details_img_actor)
 
-    fun onBind(actor:Actor) {
+    fun onBind(actor: CastEntity) {
         name.text = actor.name
         Glide.with(itemView.context)
-            .load(actor.picture)
+            .load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2/" + actor.profilePath)
             .placeholder(R.drawable.actor_dummy)
             .transform(CenterCrop(), RoundedCorners(16))
             .error(R.drawable.actor_dummy)
