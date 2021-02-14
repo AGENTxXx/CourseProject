@@ -1,4 +1,4 @@
-package com.smog.courseproject
+package com.smog.courseproject.presentation.screens.moviedetail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,15 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.smog.courseproject.MainActivity.Companion.dbApp
+import com.smog.courseproject.R
 import com.smog.courseproject.data.CastEntity
-import com.smog.courseproject.data.MovieCastEntity
 import com.smog.courseproject.data.MovieEntity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.IOException
+import com.smog.courseproject.data.network.RetrofitModule
+import com.smog.courseproject.presentation.App
+import com.smog.courseproject.presentation.screens.movielist.FragmentMoviesList
 
 
 /**
@@ -31,9 +28,15 @@ import java.io.IOException
 
 class FragmentMoviesDetails() : Fragment() {
 
-    private var adapter = ActorListAdapter()
+    private var adapter =
+        ActorListAdapter()
     private val viewModel: MoviesDetailsViewModel by viewModels {
-        MoviesDetailsViewModelFactory(arguments.movie)
+        MoviesDetailsViewModelFactory(
+            arguments.movie,
+            App.dbApp.castDao(),
+            App.dbApp.movieCastDao(),
+            RetrofitModule.moviesApi
+        )
     }
 
     override fun onCreateView(
@@ -47,16 +50,17 @@ class FragmentMoviesDetails() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.movieLiveData.observe(viewLifecycleOwner, ::initMovieData)
-
-        viewModel.getCredits(arguments.movie.id!!).observe(viewLifecycleOwner, ::showMovieCredits)
+        with(viewModel) {
+            movieLiveData.observe(viewLifecycleOwner, ::initMovieData)
+            creditsLiveData.observe(viewLifecycleOwner, ::showMovieCredits)
+        }
 
         view.findViewById<TextView>(R.id.activity_movie_details_tv_back).setOnClickListener {
             requireActivity().onBackPressed()
         }
     }
 
-    private fun showMovieCredits(credits:List<CastEntity>) {
+    private fun showMovieCredits(credits: List<CastEntity>) {
         val view = requireView()
         val cast: TextView = view.findViewById(R.id.activity_movie_details_tv_cast)
 
@@ -97,19 +101,21 @@ class FragmentMoviesDetails() : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance(movie: MovieEntity) =
-            FragmentMoviesDetails().apply {
-                arguments = Bundle().also {
-                    it.movie = movie
+            FragmentMoviesDetails()
+                .apply {
+                    arguments = Bundle().also {
+                        it.movie = movie
+                    }
                 }
-            }
 
+        private const val KEY_MOVIE = "movie"
         var Bundle?.movie: MovieEntity
             set(value) {
-                this?.putParcelable("movie", value)
+                this?.putParcelable(KEY_MOVIE, value)
             }
             get() {
-                return this?.getParcelable("movie")
-                    ?: throw IllegalArgumentException("Provide movie")
+                return this?.getParcelable(KEY_MOVIE)
+                    ?: throw IllegalArgumentException("Provide $KEY_MOVIE")
             }
     }
 

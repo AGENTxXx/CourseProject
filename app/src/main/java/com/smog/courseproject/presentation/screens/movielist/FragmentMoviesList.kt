@@ -1,4 +1,4 @@
-package com.smog.courseproject
+package com.smog.courseproject.presentation.screens.movielist
 
 import android.content.Context
 import android.content.res.Configuration
@@ -14,30 +14,24 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.smog.courseproject.MainActivity.Companion.dbApp
-import com.smog.courseproject.data.Credits
-import com.smog.courseproject.data.Genres
+import com.smog.courseproject.R
 import com.smog.courseproject.data.MovieEntity
-import com.smog.courseproject.data.Popular
+import com.smog.courseproject.data.network.RetrofitModule
+import com.smog.courseproject.presentation.App
+import com.smog.courseproject.presentation.App.Companion.dbApp
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 class FragmentMoviesList : Fragment() {
+
     private var listener: CardFragmentClickListener? = null
-    private var adapter: MovieListAdapter = MovieListAdapter {
-        listener?.cardClick(it)
-    }
+    private var adapter: MovieListAdapter = MovieListAdapter { listener?.cardClick(it) }
     private val viewModel: MoviesListViewModel by viewModels {
-        MoviesListViewModelFactory()
+        MoviesListViewModelFactory(
+            App.dbApp.movieDao(),
+            RetrofitModule.moviesApi
+        )
     }
 
     override fun onAttach(context: Context) {
@@ -69,18 +63,19 @@ class FragmentMoviesList : Fragment() {
 
         val genreDao = dbApp.genreDao()
 
+        //TODO спрячь это во вьюмодель, и избавься от статического genres здесь
         lifecycleScope.launch {
             try {
                 val result = RetrofitModule.moviesApi.getGenres()
 
                 result.body()?.genres?.forEach {
-                    genreDao?.insert(it)
+                    genreDao.insert(it)
                     genres[it.id] = it.name
                 }
             } catch (e: Exception) {
                 Log.e("ERROR", e.message!!)
-                genreDao?.all?.forEach {
-                    genres[it!!.id] = it.name
+                genreDao.getAll().forEach {
+                    genres[it.id] = it.name
                 }
             }
 
@@ -89,7 +84,7 @@ class FragmentMoviesList : Fragment() {
     }
 
     private suspend fun fetchMovies() {
-        viewModel.fetchMovies(requireActivity().applicationContext).distinctUntilChanged()
+        viewModel.fetchMovies().distinctUntilChanged()
             .collectLatest {
                 adapter.submitData(it)
             }
@@ -108,33 +103,6 @@ class FragmentMoviesList : Fragment() {
         var genres: ArrayMap<Int, String> = arrayMapOf()
 
         @JvmStatic
-        fun newInstance() =
-            FragmentMoviesList()
+        fun newInstance() = FragmentMoviesList()
     }
-}
-
-internal interface MoviesApi {
-    @GET("genre/movie/list?api_key=${BuildConfig.API_KEY}")
-    suspend fun getGenres(): Response<Genres>
-
-    @GET("movie/popular?api_key=${BuildConfig.API_KEY}")
-    suspend fun getMovies(@Query("page") pageNum: Int): Response<Popular>
-
-    @GET("movie/{movieId}/credits?api_key=${BuildConfig.API_KEY}")
-    suspend fun getMovieCredits(@Path("movieId") movieId: Int): Response<Credits>
-}
-
-internal object RetrofitModule {
-
-    private val json = Json {
-        ignoreUnknownKeys = true
-    }
-
-    @Suppress("EXPERIMENTAL_API_USAGE")
-    private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BuildConfig.BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    val moviesApi: MoviesApi = retrofit.create()
 }

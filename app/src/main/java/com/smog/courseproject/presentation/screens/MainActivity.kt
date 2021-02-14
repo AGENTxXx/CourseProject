@@ -1,31 +1,21 @@
-package com.smog.courseproject
+package com.smog.courseproject.presentation.screens
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
+import com.smog.courseproject.R
 import com.smog.courseproject.data.MovieEntity
-import com.smog.courseproject.database.AppDatabase
+import com.smog.courseproject.data.local.AppDatabase
+import com.smog.courseproject.presentation.screens.moviedetail.FragmentMoviesDetails
+import com.smog.courseproject.presentation.screens.movielist.FragmentMoviesList
 
 
 class MainActivity : AppCompatActivity(), FragmentMoviesList.CardFragmentClickListener {
 
-    companion object {
-        lateinit var dbApp: AppDatabase
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
-
-        dbApp = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "database"
-        )
-            .allowMainThreadQueries()
-            .build()
-
-        getPreferences(MODE_PRIVATE)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .add(R.id.activity_main_fl, FragmentMoviesList.newInstance(), "first")

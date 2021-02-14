@@ -90,7 +90,7 @@
             app:layout_constraintTop_toTopOf="@+id/fragment_movie_list_tv_age_rating"
             app:srcCompat="@drawable/ic_like" />
 
-        <com.smog.courseproject.ui.custom.RatingBarSvg
+        <com.smog.courseproject.presentation.custom.RatingBarSvg
             android:id="@+id/fragment_movies_list_rb_rating"
             android:layout_width="wrap_content"
             android:layout_height="8dp"

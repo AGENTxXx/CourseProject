@@ -1,4 +1,4 @@
-package com.smog.courseproject
+package com.smog.courseproject.presentation.screens.movielist
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,22 +10,21 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.smog.courseproject.R
 import com.smog.courseproject.data.MovieEntity
 
-class MovieListAdapter(private val onMovieClicked: (MovieEntity) -> Unit) :
-    PagingDataAdapter<MovieEntity, MovieViewHolder>(moviewItemCallback) {
+class MovieListAdapter(
+    private val onMovieClicked: (MovieEntity) -> Unit
+) : PagingDataAdapter<MovieEntity, MovieViewHolder>(moviewItemCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.view_holder_movie, parent, false)
-        return MovieViewHolder(view)
+        return MovieViewHolder(view, onMovieClicked)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.onBind(getItem(position)!!)
-        holder.itemView.setOnClickListener {
-            onMovieClicked(getItem(position)!!)
-        }
     }
 
     companion object {
@@ -41,7 +40,10 @@ class MovieListAdapter(private val onMovieClicked: (MovieEntity) -> Unit) :
     }
 }
 
-class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class MovieViewHolder(
+    itemView: View,
+    private val onMovieClicked: (MovieEntity) -> Unit
+) : RecyclerView.ViewHolder(itemView) {
 
     private val title: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_title)
     private val genres: TextView = itemView.findViewById(R.id.fragment_movie_list_tv_movie_genres)
@@ -56,6 +58,8 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun onBind(movie: MovieEntity) {
         with(itemView.context) {
+            //TODO вот тут как я и говорил прокидываю листенер в конструктор Вьюхолдера чтобы не ставить в адаптере
+            itemView.setOnClickListener { onMovieClicked(movie) }
             minimumAge.text = getString(R.string.movie_minimum_age, if (movie.adult!!) 18 else 13)
             reviews.text = getString(R.string.movie_reviews_count, movie.voteCount)
             length.text = getString(R.string.movie_list_movie_length, 0)
