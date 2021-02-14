@@ -21,18 +21,15 @@ android {
     }
 
     buildTypes {
+        //Здесь вместо билдфлейворсов поставил в билдтайп
+        all {
+            buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+            buildConfigField "String", "API_KEY", "\"6957c7c7ff4cb17fb5d606ddeb4621c9\""
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    flavorDimensions "serverType"
-    productFlavors {
-        prod {
-            dimension "serverType"
-            buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
-            buildConfigField "String", "API_KEY", "\"6957c7c7ff4cb17fb5d606ddeb4621c9\""
         }
     }
 
@@ -69,10 +66,13 @@ dependencies {
     implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
+    //Room
     implementation "androidx.room:room-runtime:2.2.6"
-    kapt  "androidx.room:room-compiler:2.2.6"
+    implementation "androidx.room:room-ktx:2.2.6"
+    kapt "androidx.room:room-compiler:2.2.6"
 
-    implementation 'androidx.work:work-runtime:2.4.0'
+    implementation 'androidx.work:work-runtime:2.5.0'
+    implementation "androidx.work:work-runtime-ktx:2.5.0"
 
     implementation "androidx.fragment:fragment-ktx:1.2.5"
     // ViewModel

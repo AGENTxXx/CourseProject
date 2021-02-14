@@ -1,4 +1,4 @@
-package com.smog.courseproject.ui.custom
+package com.smog.courseproject.presentation.custom
 
 import android.annotation.SuppressLint
 import android.content.Context

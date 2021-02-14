@@ -1,4 +1,4 @@
-package com.smog.courseproject
+package com.smog.courseproject.presentation.screens.moviedetail
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.smog.courseproject.R
 import com.smog.courseproject.data.CastEntity
 
-class ActorListAdapter(private var actors: List<CastEntity> = listOf()) :
-    RecyclerView.Adapter<ActorViewHolder>() {
+class ActorListAdapter(
+    private var actors: List<CastEntity> = listOf()
+) : RecyclerView.Adapter<ActorViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorViewHolder {
         val view: View =

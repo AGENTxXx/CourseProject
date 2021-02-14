@@ -1,12 +1,12 @@
-package com.smog.courseproject
+package com.smog.courseproject.presentation.screens.movielist
 
-import android.content.Context
 import android.util.Log
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import com.bumptech.glide.load.HttpException
-import com.smog.courseproject.MainActivity.Companion.dbApp
 import com.smog.courseproject.data.MovieEntity
+import com.smog.courseproject.data.local.dao.MovieDao
+import com.smog.courseproject.data.network.api.MoviesApi
 import java.io.IOException
 
 fun getDefaultPageConfig(): PagingConfig {
@@ -14,7 +14,9 @@ fun getDefaultPageConfig(): PagingConfig {
 }
 
 class MoviePagingSource(
-    val context: Context
+    //TODO убрал синглтон и прокинул его в конструктор
+    private val movieDao: MovieDao,
+    private val moviesApi: MoviesApi
 ) : PagingSource<Int, MovieEntity>() {
     override suspend fun load(
         params: LoadParams<Int>
@@ -22,14 +24,13 @@ class MoviePagingSource(
         try {
             val nextPageNumber = params.key ?: 1
 
-            val movieDao = dbApp.movieDao()
             var movies: List<MovieEntity>?
             try {
-                val response = RetrofitModule.moviesApi.getMovies(nextPageNumber)
+                val response = moviesApi.getMovies(nextPageNumber)
                 movies = response.body()!!.results!!
-                movieDao?.insertAll(movies)
+                movieDao.insertAll(movies)
             } catch (e: IOException) {
-                movies = movieDao?.getLimitItems(12, (nextPageNumber - 1) * 12)
+                movies = movieDao.getLimitItems(12, (nextPageNumber - 1) * 12)
             }
 
             return LoadResult.Page(

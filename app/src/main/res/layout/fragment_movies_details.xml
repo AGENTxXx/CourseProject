@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_steel"
-    tools:context=".MainActivity">
+    tools:context=".presentation.screens.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -152,7 +152,7 @@
 
 
 
-        <com.smog.courseproject.ui.custom.RatingBarSvg
+        <com.smog.courseproject.presentation.custom.RatingBarSvg
             android:id="@+id/activity_movie_details_rb_rating"
             android:layout_width="wrap_content"
             android:layout_height="12dp"
